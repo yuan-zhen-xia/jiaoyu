@@ -51,9 +51,9 @@ export default {
       // 表单对象数据
       loginForm: {
         // 绑定from表单中的手机号
-        mobile: '',
+        mobile: '13911111111',
         // 绑定from表单中的验证码
-        code: ''
+        code: '246810'
       },
       // 表单效验规则数据
       // 得到： el-form加属性rules绑定数据，传入约定的验证规则
@@ -93,7 +93,18 @@ export default {
       // $refs.loginForm会找到带有ref的元素， 如果获取成功
       this.$refs.loginForm.validate((valid) => {
         if (valid) {
-          console.log('校验success')
+          // console.log('校验success')
+          // 请求登录接口
+          this.$http.post('http://ttapi.research.itcast.cn/mp/v1_0/authorizations', this.loginForm)
+            .then(res => {
+              // console.log(res.data)
+              // 跳转去首页
+              this.$router.push('/')
+            })
+            .catch(() => {
+              // 错误信息提示
+              this.$message.error('手机号或验证码错误')
+            })
         }
       })
     }
