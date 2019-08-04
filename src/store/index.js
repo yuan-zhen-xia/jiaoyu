@@ -8,7 +8,7 @@ export default {
     //   储存用户信息到sessionStorage中
     window.sessionStorage.setItem(KEY, JSON.stringify(user))
   },
-  git () {
+  getUser () {
     //   获取用户信息从sessionStorage中
     return JSON.parse(window.sessionStorage.getItem(KEY) || '{}')
   }

@@ -11,6 +11,8 @@ import Article from '@/views/article'
 
 import err from '@/views/err'
 
+import store from '@/store'
+
 Vue.use(VueRouter)
 
 const router = new VueRouter({
@@ -34,6 +36,18 @@ const router = new VueRouter({
     // 根据路由处理404报错页面
     { path: '*', name: 'err', component: err }
   ]
+})
+
+// 全球前置守卫
+router.beforeEach((to, from, next) => {
+  // console.log(store.getUser().token)
+
+  // 判断是不是登录路由
+  if (to.path === '/login') return next()
+  // 判断是否为登录
+  if (!store.getUser().token) return next('/login')
+  // 3放行
+  next()
 })
 
 export default router
