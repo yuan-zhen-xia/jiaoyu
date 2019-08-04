@@ -6,7 +6,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 
 import '@/style/index.less'
 
-import axios from 'axios'
+import axios from '@/api'
 
 import router from '@/router'
 
