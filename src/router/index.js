@@ -7,6 +7,10 @@ import Home from '@/views/home'
 
 import Welcome from '@/views/welcome'
 
+import Article from '@/views/article'
+
+import err from '@/views/err'
+
 Vue.use(VueRouter)
 
 const router = new VueRouter({
@@ -22,8 +26,13 @@ const router = new VueRouter({
       children: [
         {
           path: '/', name: 'welcome', component: Welcome
+        },
+        {
+          path: '/article', name: 'article', component: Article
         }
-      ] }
+      ] },
+    // 根据路由处理404报错页面
+    { path: '*', name: 'err', component: err }
   ]
 })
 

@@ -34,6 +34,8 @@
   </div>
 </template>
 <script>
+// 引入store模块，才可以使用其中的方法
+import store from '@/store'
 export default {
   data () {
     // 申明效验函数 在return之前
@@ -98,6 +100,10 @@ export default {
           this.$http.post('http://ttapi.research.itcast.cn/mp/v1_0/authorizations', this.loginForm)
             .then(res => {
               // console.log(res.data)
+
+              // 存储用户信息
+              store.setUser(res.data.data)
+
               // 跳转去首页
               this.$router.push('/')
             })

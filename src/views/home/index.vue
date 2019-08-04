@@ -8,38 +8,39 @@
         <el-menu
          :collapse="isCollapse"
          :collapse-transition=false
-          default-active="2"
+         :default-active="$route.path"
           class="el-menu-vertical-demo"
           background-color="#002033"
           text-color="#fff"
           active-text-color="#ffd04b"
+          router
         >
 
-          <el-menu-item index="1">
+          <el-menu-item index="/">
             <i class="el-icon-house"></i>
             <span slot="title">首页</span>
           </el-menu-item>
-          <el-menu-item index="2">
+          <el-menu-item index="/article">
             <i class="el-icon-reading"></i>
             <span slot="title">内容管理</span>
           </el-menu-item>
-          <el-menu-item index="3">
+          <el-menu-item index="/image">
             <i class="el-icon-money"></i>
             <span slot="title">素材管理</span>
           </el-menu-item>
-          <el-menu-item index="4">
+          <el-menu-item index="/publish">
             <i class="el-icon-truck"></i>
             <span slot="title">发布文章</span>
           </el-menu-item>
-          <el-menu-item index="5">
+          <el-menu-item index="/comment">
             <i class="el-icon-chat-square"></i>
             <span slot="title">评论管理</span>
           </el-menu-item>
-          <el-menu-item index="6">
+          <el-menu-item index="/fans">
             <i class="el-icon-present"></i>
             <span slot="title">粉丝管理</span>
           </el-menu-item>
-          <el-menu-item index="7">
+          <el-menu-item index="/setting">
             <i class="el-icon-setting"></i>
             <span slot="title">个人设置</span>
           </el-menu-item>
