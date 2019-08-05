@@ -53,15 +53,17 @@
           <span class="el-icon-s-fold" @click="toggleMenu()"></span>
           <span class="text">江苏传智播客科技教育有限公司</span>
           <!-- 下拉菜单模板开始 -->
-          <el-dropdown class="fl">
+          <el-dropdown class="fl" @command="changemenu">
             <span class="el-dropdown-link">
               <img :src="photo" alt />
               {{name}}
               <i class="el-icon-arrow-down el-icon--right"></i>
             </span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item icon="el-icon-setting" @click.native="setting()">个人设置</el-dropdown-item>
-              <el-dropdown-item icon="el-icon-unlock" @click.native="logout()">用户登录</el-dropdown-item>
+              <el-dropdown-item icon="el-icon-setting" command="setting">个人设置</el-dropdown-item>
+              <el-dropdown-item icon="el-icon-unlock" command="logout">
+                <!-- 绑定事件的时候 不加括号  为了接受默认参数 -->
+                退出登录</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
           <!-- 下拉菜单模板结束 -->
@@ -105,7 +107,12 @@ export default {
     logout () {
       store.clearUser()
       this.$router.push('/login')
+    },
+    changemenu (menuType) {
+      //  // menuType 是变量  值 setting  logout
+      this[menuType]()
     }
+
   }
 
 }
