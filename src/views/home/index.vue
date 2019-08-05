@@ -55,8 +55,8 @@
           <!-- 下拉菜单模板开始 -->
           <el-dropdown class="fl">
             <span class="el-dropdown-link">
-              <img src="../../assets/images/avatar.jpg" alt />
-              下拉菜单
+              <img :src="photo" alt />
+              {{name}}
               <i class="el-icon-arrow-down el-icon--right"></i>
             </span>
             <el-dropdown-menu slot="dropdown">
@@ -75,11 +75,20 @@
   </div>
 </template>
 <script>
+import store from '@/store'
 export default {
   data () {
     return {
-      isCollapse: true
+      isCollapse: true,
+      name: '',
+      photo: ''
     }
+  },
+  created () {
+    // 从本地获取了name和photo值，给data
+    const user = store.getUser()
+    this.name = user.name
+    this.photo = user.photo
   },
   methods: {
     toggleMenu () {
@@ -115,6 +124,8 @@ export default {
     float: right;
       img{
           vertical-align: middle;
+          width: 40px;
+          height: 40px;
       }
   }
   .logo{
