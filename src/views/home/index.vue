@@ -60,8 +60,8 @@
               <i class="el-icon-arrow-down el-icon--right"></i>
             </span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>个人设置</el-dropdown-item>
-              <el-dropdown-item>用户登录</el-dropdown-item>
+              <el-dropdown-item icon="el-icon-setting" @click.native="setting()">个人设置</el-dropdown-item>
+              <el-dropdown-item icon="el-icon-unlock" @click.native="logout()">用户登录</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
           <!-- 下拉菜单模板结束 -->
@@ -94,8 +94,20 @@ export default {
     toggleMenu () {
       // 侧边栏的展开和收缩 默认展开
       this.isCollapse = !this.isCollapse
+    },
+    // 因为是原生dom支持的事件，所以这个方法不会被执行，解决办法，将点击事件绑定在组件解析后的dom元素上,也就是在点击事件后加native修饰符，例如@click.native
+    // 跳转个人设置页面
+    setting () {
+      // this.$router.push({ name: 'setting' })
+      this.$router.push('/setting')
+    },
+    // 跳转退出登录页面
+    logout () {
+      store.clearUser()
+      this.$router.push('/login')
     }
   }
+
 }
 </script>
 <style scoped lang='less'>
