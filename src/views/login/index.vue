@@ -93,24 +93,33 @@ export default {
       // 方案：调用form组件提供的方法validate
       // validate 对整个表单进行校验的方法，参数为一个回调函数。该回调函数会在校验结束后被调用，并传入两个参数：是否校验成功和未通过校验的字段。若不传入回调函数，则会返回一个 promise
       // $refs.loginForm会找到带有ref的元素， 如果获取成功
-      this.$refs.loginForm.validate((valid) => {
+      this.$refs.loginForm.validate(async valid => {
         if (valid) {
           // console.log('校验success')
           // 请求登录接口
-          this.$http.post('http://ttapi.research.itcast.cn/mp/v1_0/authorizations', this.loginForm)
-            .then(res => {
-              // console.log(res.data)
+          // this.$http.post('http://ttapi.research.itcast.cn/mp/v1_0/authorizations', this.loginForm)
+          //   .then(res => {
+          //     // console.log(res.data)
 
-              // 存储用户信息
-              store.setUser(res.data.data)
+          //     // 存储用户信息
+          //     store.setUser(res.data.data)
 
-              // 跳转去首页
-              this.$router.push('/')
-            })
-            .catch(() => {
-              // 错误信息提示
-              this.$message.error('手机号或验证码错误')
-            })
+          //     // 跳转去首页
+          //     this.$router.push('/')
+          //   })
+          //   .catch(() => {
+          //     // 错误信息提示
+          //     this.$message.error('手机号或验证码错误')
+          //   })
+          // async&await的使用，怎样处理错误
+          // try{可能出现问题的代码}catch（e）{错误代码执行的函数}  e代表错误实例
+          try {
+            const { data: { data } } = await this.$http.post('authorizations', this.loginForm)
+            store.setUser(data)
+            this.$router.push('/')
+          } catch (e) {
+            this.$message.error('手机号或验证码错误')
+          }
         }
       })
     }
