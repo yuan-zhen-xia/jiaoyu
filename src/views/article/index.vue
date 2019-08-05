@@ -3,12 +3,9 @@
     <!-- 筛选条件 -->
     <el-card>
       <!-- 卡片分层 -->
-      <div slot="header" class="clearfix">
+      <div slot="header">
         <!-- 面包屑摸板 -->
-        <el-breadcrumb separator-class="el-icon-arrow-right">
-          <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-          <el-breadcrumb-item>内容管理</el-breadcrumb-item>
-        </el-breadcrumb>
+          <my-bread>内容管理</my-bread>
       </div>
       <el-form label-width="80px" size="small">
         <el-form-item label="状态:">
@@ -52,7 +49,9 @@
   </div>
 </template>
 <script>
+// 引入封装好的面包屑组件
 export default {
+  // 使用面包屑组件
   data () {
     return {
       // 筛选表单数据，提交给后台的参数

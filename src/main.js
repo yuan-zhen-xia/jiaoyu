@@ -10,6 +10,9 @@ import axios from '@/api'
 
 import router from '@/router'
 
+import myCom from '@/components'
+Vue.use(myCom)
+
 Vue.prototype.$http = axios
 
 Vue.use(ElementUI)
