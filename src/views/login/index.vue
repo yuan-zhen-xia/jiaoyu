@@ -64,6 +64,7 @@ export default {
         // 效验手机号数据，
         mobile: [
           {
+            // 输入框内容是否为必填项
             required: true,
             // 错误的提示信息
             message: '请输入手机号',

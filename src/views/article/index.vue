@@ -21,45 +21,84 @@
 
         <el-form-item label="频道:">
           <!-- 下拉框 -->
-          <el-select v-model="reqParams.channel_id" placeholder="请选择">
+          <el-select clearable v-model="reqParams.channel_id" placeholder="请选择">
             <el-option
               v-for="item in channelOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
             ></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="日期:">
           <!-- 日期 -->
+          <!-- value-format="yyyy-MM-dd"组件自带更改日期格式的方法 -->
           <el-date-picker
-            v-model="dataArr"
+            v-model="dateArr"
             type="daterange"
             range-separator="至"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
+            @change="changeDate"
+            value-format="yyyy-MM-dd"
           ></el-date-picker>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary">筛选</el-button>
+          <el-button type="primary" @click="search()">筛选</el-button>
         </el-form-item>
       </el-form>
     </el-card>
     <!-- 筛选结果 -->
     <el-card>
-      <div slot="header">根据筛选条件查询到条结果</div>
+      <div slot="header">根据筛选条件查询到{{total}}条结果</div>
       <!-- 表格组件 -->
-      <el-table :data="tableData">
+      <el-table :data="articles">
         <!-- prop是指定字段显示该字段的值  -->
-        <el-table-column prop="date" label="封面" width="180"></el-table-column>
-        <el-table-column prop="name" label="姓名" width="180"></el-table-column>
-        <el-table-column prop="address" label="地址"></el-table-column>
+        <el-table-column prop="title" label="封面">
+          <!-- 使用作用域插槽，results外部数据，articles传入了表格组件，帮我们做了遍历，每一项数据row=“每一项数据”        所有：使用每一项数据，其实是组件内部的数据 -->
+          <template slot-scope="scope">
+            <el-image
+              fit="scale-down"
+              :src="scope.row.cover.images[0]"
+              style="width:120px;height:80px"
+            >
+              <div slot="error" class="image-slot">
+                <img src="../../assets/images/error.gif" alt style="width:120px;height:80px" />
+              </div>
+            </el-image>
+          </template>
+        </el-table-column>
+        <el-table-column prop="title" label="标题"></el-table-column>
+        <el-table-column label="状态">
+          <template slot-scope="scope">
+            <el-tag v-if="scope.row.status===0" type="info">草稿</el-tag>
+            <el-tag v-if="scope.row.status===1">待审核</el-tag>
+            <el-tag v-if="scope.row.status===2" type="success">审核通过</el-tag>
+            <el-tag v-if="scope.row.status===3" type="warning">审核失效</el-tag>
+            <el-tag v-if="scope.row.status===4" type="danger" @click="del(scope.row.id)">删除</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="发布时间" prop="pubdate"></el-table-column>
+        <el-table-column label="操作" width="120px">
+          <template slot-scope="scope">
+            <el-button type="primary" icon="el-icon-edit" circle  plain></el-button>
+              <el-button type="danger" @click="del(scope.row.id)" icon="el-icon-delete" circle  plain></el-button>
+          </template>
+        </el-table-column>
       </el-table>
       <!-- 分页组件 -->
       <div style="text-align: center;margin-top:30px">
-         <el-pagination background layout="prev, pager, next" :total="1000"></el-pagination>
+        <!-- :total="1000" 指定列表数据总条数 -->
+        <!-- 每页默认显示10条数据，:page-size="reqParams.per_page" -->
+        <!-- 更新数据后，当前页码需要修改，选中对应的按钮 current-page -->
+        <el-pagination
+         background layout="prev, pager, next"
+         :total="total"
+         :page-size="reqParams.per_page"
+         @current-change="changePager"
+         :current-page="reqParams.page">
+         </el-pagination>
       </div>
-
     </el-card>
   </div>
 </template>
@@ -71,21 +110,84 @@ export default {
   data () {
     return {
       // 筛选表单数据，提交给后台的参数
+      // axios提交的数据，如果值为null是不会提交参数的
       reqParams: {
         status: null,
-        channel_id: null
+        channel_id: null,
+        begin_pubdate: null,
+        end_pubdate: null,
+        page: 1,
+        per_page: 20
       },
       // 频道下拉数据，不需要提交到后台
-      channelOptions: [
-        {
-          value: 1,
-          label: 'js'
-        }
-      ],
+      channelOptions: [],
       // 日期数据
-      dataArr: [],
+      dateArr: [],
       // 定义表格数据
-      articles: [{}]
+      articles: [],
+      // 总条数
+      total: 0
+    }
+  },
+  // 计算属性使用场景，当你需要一个新数据，要依赖data中的数据
+  // watch侦听器的使用场景：当你需要监听某一个属性的变化，去做一些开销较大的操作，（异步操作）
+  watch: {
+    'reqParams.channel_id': function (newval, oldval) {
+      if (newval === '') {
+        this.reqParams.channel_id = null
+      }
+    }
+  },
+  // 定义钩子函数，当组件函数都执行完毕后执行
+  created () {
+    // 获取频道下拉选项数据，定义方法
+    this.getChangeOptions()
+    // 获取文章列表 数据
+    this.getArticles()
+  },
+  methods: {
+    // 日期选择后的事件
+    changeDate (dateArr) {
+      // 将清除数据后筛选考虑在内
+      if (dateArr) {
+        // console.log(dateArr)
+
+        this.reqParams.begin_pubdate = dateArr[0]
+        this.reqParams.end_pubdate = dateArr[1]
+      } else {
+        this.reqParams.begin_pubdate = null
+        this.reqParams.end_pubdate = null
+      }
+    },
+    // 筛选函数
+    search () {
+      // 筛选项为双向绑定，拿对应数据发松请求即可，注意，从新筛选到页码的第一页
+      this.reqParams.page = 1
+      this.getArticles()
+    },
+    // 改变分页事件对应函数
+    changePager (newPage) {
+      this.reqParams.page = newPage
+      this.getArticles()
+    },
+    // 定义获取后台获取数据的方法，并将其赋予data数据
+    async getChangeOptions () {
+      const {
+        data: { data }
+      } = await this.$http.get('channels')
+      this.channelOptions = data.channels
+    },
+    async getArticles () {
+      // axios的get传参  第一种，url？key=value&key1=value1
+      // 第二种： 传入一个对象形式 ｛params：指定传参对象｝，发请求的时候自动拼接都地址栏后面
+      const {
+        data: { data }
+      } = await this.$http.get('articles', { params: this.reqParams })
+      // console.log(data)
+      // 列表数据
+      this.articles = data.results
+      // 总条数
+      this.total = data.total_count
     }
   }
 }
@@ -93,6 +195,5 @@ export default {
 <style scoped lang='less'>
 .el-card {
   margin-top: 20px;
-
 }
 </style>

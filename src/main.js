@@ -10,6 +10,7 @@ import axios from '@/api'
 
 import router from '@/router'
 
+// 挂载自己设置的组件为全局组件
 import myCom from '@/components'
 Vue.use(myCom)
 
