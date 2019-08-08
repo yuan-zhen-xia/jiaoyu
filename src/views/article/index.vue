@@ -81,8 +81,8 @@
         <el-table-column label="发布时间" prop="pubdate"></el-table-column>
         <el-table-column label="操作" width="120px">
           <template slot-scope="scope">
-            <el-button type="primary" icon="el-icon-edit" circle  plain></el-button>
-              <el-button type="danger" @click="del(scope.row.id)" icon="el-icon-delete" circle  plain></el-button>
+            <el-button type="primary" @click="edit(scope.row.id)" icon="el-icon-edit" circle plain></el-button>
+            <el-button type="danger" @click="del(scope.row.id)" icon="el-icon-delete" circle plain></el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -92,12 +92,13 @@
         <!-- 每页默认显示10条数据，:page-size="reqParams.per_page" -->
         <!-- 更新数据后，当前页码需要修改，选中对应的按钮 current-page -->
         <el-pagination
-         background layout="prev, pager, next"
-         :total="total"
-         :page-size="reqParams.per_page"
-         @current-change="changePager"
-         :current-page="reqParams.page">
-         </el-pagination>
+          background
+          layout="prev, pager, next"
+          :total="total"
+          :page-size="reqParams.per_page"
+          @current-change="changePager"
+          :current-page="reqParams.page"
+        ></el-pagination>
       </div>
     </el-card>
   </div>
@@ -146,6 +147,29 @@ export default {
     this.getArticles()
   },
   methods: {
+    // 编辑函数
+    edit (id) {
+      this.$router.push('/publish?id=' + id)
+    },
+    // 删除函数
+    del (id) {
+      // 弹出确认框，点击确认，发出删除请求，响应成功更新列表即可
+      this.$confirm('此操作将永久删除该文章, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(async () => {
+        //  点击确认，向后台发送删除请求
+          await this.$http.delete(`articles/${id}`)
+          // 提示用户删除成功
+          this.$message.success('删除成功')
+          // 更新列表
+          this.getArticles()
+        }).catch(() => {
+
+        })
+    },
     // 日期选择后的事件
     changeDate (dateArr) {
       // 将清除数据后筛选考虑在内

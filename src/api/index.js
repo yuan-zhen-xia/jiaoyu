@@ -3,8 +3,25 @@ import axios from 'axios'
 import store from '@/store'
 import router from '@/router'
 
+import JSONBig from 'json-bigint'
+
 // 进行配置根路径
 axios.defaults.baseURL = 'http://ttapi.research.itcast.cn/mp/v1_0/'
+// axios中，在传递给 then/catch 前，允许修改响应数据
+axios.defaults.transformResponse = [
+  (data) => {
+    // 此时，data为后端的原始数据
+    // data中如果没有返回数据，值为null
+    // JSONBig.parse(null)会报错，阻止程序的运行
+    // 设置监听
+    try {
+      return JSONBig.parse(data)
+      // 如果转换失败，为了不影响程序的运行，将data返回页面
+    } catch (e) {
+      return data
+    }
+  }
+]
 // 编辑请求，成为接口参数格式(这段代码只会执行一次)
 // axios.defaults.headers = {
 //   Authorization: `Bearer ${store.getUser().token}`
