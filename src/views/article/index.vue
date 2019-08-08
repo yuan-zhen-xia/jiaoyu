@@ -19,16 +19,14 @@
           </el-radio-group>
         </el-form-item>
 
-        <el-form-item label="频道:">
-          <!-- 下拉框 -->
-          <el-select clearable v-model="reqParams.channel_id" placeholder="请选择">
-            <el-option
-              v-for="item in channelOptions"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
-            ></el-option>
-          </el-select>
+        <el-form-item label="频道:" >
+          <!-- 使用自己封装的组件 -->
+          <!--
+              v-model="reqParams.channel_id"
+              就是  v-bind:value 和 v-on:input 的组合使用方式
+              <my-channel v-model="reqParams.channel_id"></my-channel>
+           -->
+          <my-channel v-model="reqParams.channel_id"></my-channel>
         </el-form-item>
         <el-form-item label="日期:">
           <!-- 日期 -->
@@ -130,19 +128,8 @@ export default {
       total: 0
     }
   },
-  // 计算属性使用场景，当你需要一个新数据，要依赖data中的数据
-  // watch侦听器的使用场景：当你需要监听某一个属性的变化，去做一些开销较大的操作，（异步操作）
-  watch: {
-    'reqParams.channel_id': function (newval, oldval) {
-      if (newval === '') {
-        this.reqParams.channel_id = null
-      }
-    }
-  },
   // 定义钩子函数，当组件函数都执行完毕后执行
   created () {
-    // 获取频道下拉选项数据，定义方法
-    this.getChangeOptions()
     // 获取文章列表 数据
     this.getArticles()
   },
@@ -193,13 +180,6 @@ export default {
     changePager (newPage) {
       this.reqParams.page = newPage
       this.getArticles()
-    },
-    // 定义获取后台获取数据的方法，并将其赋予data数据
-    async getChangeOptions () {
-      const {
-        data: { data }
-      } = await this.$http.get('channels')
-      this.channelOptions = data.channels
     },
     async getArticles () {
       // axios的get传参  第一种，url？key=value&key1=value1
