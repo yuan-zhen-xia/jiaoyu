@@ -13,6 +13,8 @@ import err from '@/views/err'
 
 import store from '@/store'
 
+import Image from '@/views/image'
+
 Vue.use(VueRouter)
 
 const router = new VueRouter({
@@ -31,6 +33,9 @@ const router = new VueRouter({
         },
         {
           path: '/article', name: 'article', component: Article
+        },
+        {
+          path: '/image', name: 'image', component: Image
         }
       ] },
     // 根据路由处理404报错页面
