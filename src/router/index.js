@@ -15,6 +15,8 @@ import store from '@/store'
 
 import Image from '@/views/image'
 
+import Publish from '@/views/publish'
+
 Vue.use(VueRouter)
 
 const router = new VueRouter({
@@ -36,6 +38,9 @@ const router = new VueRouter({
         },
         {
           path: '/image', name: 'image', component: Image
+        },
+        {
+          path: '/publish', name: 'publish', component: Publish
         }
       ] },
     // 根据路由处理404报错页面
