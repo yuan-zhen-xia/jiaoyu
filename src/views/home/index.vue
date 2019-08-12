@@ -2,20 +2,18 @@
   <div class="home-container">
     <el-container class="hear">
       <el-aside :width="isCollapse?'64px':'200px'">
-        <div class="logo" :class="{miniLogo:isCollapse}">
-        </div>
+        <div class="logo" :class="{miniLogo:isCollapse}"></div>
         <!-- 左侧菜单导航 -->
         <el-menu
-         :collapse="isCollapse"
-         :collapse-transition=false
-         :default-active="$route.path"
+          :collapse="isCollapse"
+          :collapse-transition="false"
+          :default-active="$route.path"
           class="el-menu-vertical-demo"
           background-color="#002033"
           text-color="#fff"
           active-text-color="#ffd04b"
           router
         >
-
           <el-menu-item index="/">
             <i class="el-icon-house"></i>
             <span slot="title">首页</span>
@@ -63,14 +61,15 @@
               <el-dropdown-item icon="el-icon-setting" command="setting">个人设置</el-dropdown-item>
               <el-dropdown-item icon="el-icon-unlock" command="logout">
                 <!-- 绑定事件的时候 不加括号  为了接受默认参数 -->
-                退出登录</el-dropdown-item>
+                退出登录
+              </el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
           <!-- 下拉菜单模板结束 -->
         </el-header>
         <el-main>
-            <!-- 二级路由的出口 -->
-            <router-view></router-view>
+          <!-- 二级路由的出口 -->
+          <router-view></router-view>
         </el-main>
       </el-container>
     </el-container>
@@ -78,6 +77,8 @@
 </template>
 <script>
 import store from '@/store'
+import eventBus from '@/components/eventBus'
+
 export default {
   data () {
     return {
@@ -87,6 +88,12 @@ export default {
     }
   },
   created () {
+    eventBus.$on('updateName', name => {
+      this.name = name
+    })
+    eventBus.$on('updatePhoto', photo => {
+      this.photo = photo
+    })
     // 从本地获取了name和photo值，给data
     const user = store.getUser()
     this.name = user.name
@@ -112,9 +119,7 @@ export default {
       //  // menuType 是变量  值 setting  logout
       this[menuType]()
     }
-
   }
-
 }
 </script>
 <style scoped lang='less'>
@@ -141,25 +146,26 @@ export default {
   }
   .fl {
     float: right;
-      img{
-          vertical-align: middle;
-          width: 40px;
-          height: 40px;
-      }
+    img {
+      vertical-align: middle;
+      width: 40px;
+      height: 40px;
+    }
   }
-  .logo{
-      width: 100%;
-      height: 60px;
-      background:#002244 url(../../assets/images/logo_admin.png) no-repeat center/140px auto;
+  .logo {
+    width: 100%;
+    height: 60px;
+    background: #002244 url(../../assets/images/logo_admin.png) no-repeat
+      center/140px auto;
   }
-//   根据用户的点击来设置显示的图片，默认为大图，所以小图样式写在大图样式后，当用户点击，覆盖大图样式
+  //   根据用户的点击来设置显示的图片，默认为大图，所以小图样式写在大图样式后，当用户点击，覆盖大图样式
   .miniLogo {
     //   单纯设置图片，否则会覆盖背景色
-      background-image: url(../../assets/images/logo_admin_01.png);
-      background-size: 40px auto;
+    background-image: url(../../assets/images/logo_admin_01.png);
+    background-size: 40px auto;
   }
-  .el-menu{
-      border:none;
+  .el-menu {
+    border: none;
   }
 }
 </style>

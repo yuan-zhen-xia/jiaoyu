@@ -18,6 +18,9 @@ import Image from '@/views/image'
 import Publish from '@/views/publish'
 
 import Comment from '@/views/comment'
+
+import Setting from '@/views/setting'
+
 Vue.use(VueRouter)
 
 const router = new VueRouter({
@@ -45,6 +48,9 @@ const router = new VueRouter({
         },
         {
           path: '/comment', name: 'comment', component: Comment
+        },
+        {
+          path: '/setting', name: 'setting', component: Setting
         }
       ] },
     // 根据路由处理404报错页面
